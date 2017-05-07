@@ -6,6 +6,11 @@ import xlrd
 import xlwt
 import platform
 import csv
+import getpass
+import time 
+import getopt
+import subprocess
+import threading
 
 PARAM_DUT                      = 'HAWKEYE'
 PARAM_TEST_PLAN_COVER          = 'Testplan Cover'
