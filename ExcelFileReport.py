@@ -11,6 +11,7 @@ import time
 import getopt
 import subprocess
 import threading
+import string
 
 PARAM_DUT                      = 'HAWKEYE'
 PARAM_TEST_PLAN_COVER          = 'Testplan Cover'
