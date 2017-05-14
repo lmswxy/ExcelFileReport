@@ -12,8 +12,10 @@ import getopt
 import subprocess
 import threading
 import optparse
+import xlwings
 
-PARAM_DUT                      = 'HAWKEYE'
+PARAM_TEST_DUT                 = 'HAWKEYE'
+PARAM_TEST_PLAN_PREFI          = 'Testplan_'
 PARAM_TEST_PLAN_COVER          = 'Testplan Cover'
 PARAM_TEST_PLAN_DEFINITION     = 'Definitions'
 PARAM_TEST_PLAN_REVISION       = 'Revision'
@@ -50,7 +52,29 @@ def PlatformInfo():
 	pass
 
 def MarkTestResulttoTestPlan(ResultFileName, TestPlanName):
-    
+    pass
+
+def GetSheetName(wb):
+    OriSheetName  = []
+    PostSheetName = []
+    workbook = xlrd.open_workbook(wb)
+    #print workbook.sheet_names()
+    OriSheetName = workbook.sheet_names()
+    for shtnm in OriSheetName:
+	if not shtnm in [PARAM_TEST_PLAN_COVER,PARAM_TEST_PLAN_DEFINITION,PARAM_TEST_PLAN_REVISION] and shtnm.startswith(PARAM_TEST_PLAN_PREFIX):
+            PostSheetName.append(shtnm)
+    return PostSheetName
+
+def MoveSheet2Report(wb1, wb2):
+    writer = pd.ExcelWriter(wb2)
+    for shtnm in GetSheetName(wb1):
+	DFShtnm = 'DF_' + shtnm
+        DFShtnm = pd.read_excel(wb1, sheetname=shtnm, skiprows=[0])
+        #print shtnm
+	DFShtnm.to_excel(writer,shtnm, index = False)
+    writer.save()
+    return wb2
+
 def parse_args():
     usage = u'''To Find a file, the 1st para is path, and the 2nd para is file name'''
     parser = optparse.OptionParser(usage)
@@ -64,3 +88,6 @@ def parse_args():
 if __name__ == '__main__':
     print FileExist('Hawkeye_WiFi_SoC_VI_Testplan.xlsx',os.getcwd())
     print PlatformInfo()
+    print GetSheetName('Hawkeye_WiFi_SoC_VI_Testplan.xlsx')
+    MoveSheet2Report('Hawkeye_WiFi_SoC_VI_Testplan.xlsx', 'tttt.xlsx')
+
